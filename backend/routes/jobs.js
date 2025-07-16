@@ -38,16 +38,32 @@ router.post('/', async (req, res) => {
           globalMetrics.totalCost += metrics.cost;
           globalMetrics.requestCount++;
           
-          // Return job with summary
+          // Return only necessary fields
           return {
-            ...job,
+            id: job.id,
+            title: job.title,
+            description: job.description,
+            company: job.company ? { display_name: job.company.display_name } : null,
+            location: job.location ? { display_name: job.location.display_name } : null,
+            created: job.created,
+            salary_min: job.salary_min,
+            salary_max: job.salary_max,
+            url: job.redirect_url,
             summary,
             metrics,
           };
         } catch (error) {
           console.error(`Error summarizing job ${job.id}:`, error);
           return {
-            ...job,
+            id: job.id,
+            title: job.title,
+            description: job.description,
+            company: job.company ? { display_name: job.company.display_name } : null,
+            location: job.location ? { display_name: job.location.display_name } : null,
+            created: job.created,
+            salary_min: job.salary_min,
+            salary_max: job.salary_max,
+            url: job.redirect_url,
             summary: "Failed to generate summary.",
             metrics: { runtime: 0, tokensUsed: 0, cost: 0 }
           };
