@@ -12,6 +12,59 @@ An intelligent job search application that fetches job listings, auto-summarizes
 - **Modern UI**: Clean, responsive, card-based design with expandable job details
 - **Performance Metrics**: Track and display runtime, token usage, and cost metrics
 
+## Quick Start Guide
+
+### Local Setup (5 Steps)
+
+1. **Clone & Install**
+   ```bash
+   git clone https://github.com/raymax0x/job-mvp.git
+   cd job-mvp
+   npm run setup   # Installs both frontend and backend dependencies
+   ```
+
+2. **Set Environment Variables**
+   ```bash
+   # Backend (.env)
+   echo "PORT=8001
+   OPENAI_API_KEY=your_openai_key
+   ADZUNA_APP_ID=your_adzuna_id
+   ADZUNA_API_KEY=your_adzuna_key" > backend/.env
+   
+   # Frontend (.env.local)
+   echo "NEXT_PUBLIC_API_URL=http://localhost:8001/api" > frontend/.env.local
+   ```
+
+3. **Run Application**
+   ```bash
+   # Start both with concurrently (or use separate terminals)
+   npm start
+   ```
+
+4. **Access the App**: Open `http://localhost:3000` in your browser
+
+5. **Test Features**: Search for "Full-Stack Engineer" jobs and try generating a cover letter
+
+### Cloud Deployment (5 Steps)
+
+1. **Push to GitHub**
+   ```bash
+   git push origin main
+   ```
+
+2. **Deploy Backend (Render)**
+   - Create new Web Service on Render pointing to your repository
+   - Set Root Directory to `backend`
+   - Add environment variables: `OPENAI_API_KEY`, `ADZUNA_APP_ID`, `ADZUNA_API_KEY`
+
+3. **Deploy Frontend (Vercel)**
+   - Import your GitHub repository to Vercel
+   - Set `NEXT_PUBLIC_API_URL=https://your-backend-url.onrender.com/api`
+
+4. **Connect Services**: Ensure frontend environment variable points to your backend URL with `/api` suffix
+
+5. **Access Your App**: Visit your Vercel deployment URL
+
 ## Tech Stack
 
 ### Frontend

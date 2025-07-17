@@ -4,16 +4,33 @@ This document lists all external sources, libraries, APIs, and resources used in
 
 ## APIs
 
+### Job Search APIs
+
+1. **Adzuna API** (✅ Selected)
+   - **Documentation**: [Adzuna API Documentation](https://developer.adzuna.com/overview)
+   - **Endpoint Used**: `/v1/api/jobs/{country}/search`
+   - **Justification**: Adzuna was selected for its comprehensive job data across multiple countries and generous free tier offering 1,000 API calls per month. Its structured response format provides rich job details including salary information and geographic data, making it ideal for our summarization pipeline.
+
+2. **Indeed API**
+   - **Documentation**: [Indeed API Documentation](https://developer.indeed.com/docs/job-search-api/)
+   - **Features**: Extensive job listings, employer information, and detailed job descriptions
+   - **Limitations**: Requires employer account and has stricter rate limits
+
+3. **LinkedIn Jobs API**
+   - **Documentation**: [LinkedIn Marketing API](https://learn.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/job-posting-api)
+   - **Features**: Access to LinkedIn's professional job network, company details integration
+   - **Limitations**: Requires LinkedIn partnership, more complex authentication
+
+4. **ZipRecruiter API**
+   - **Documentation**: [ZipRecruiter Partner API](https://www.ziprecruiter.com/zipsearch)
+   - **Features**: US-focused job data, simple integration
+   - **Limitations**: Less international coverage than Adzuna
+
 ### OpenAI API
 - **Purpose**: Used for job summarization and cover letter generation
 - **Documentation**: [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
 - **Model Used**: GPT-3.5 Turbo
 - **Pricing**: [OpenAI Pricing Page](https://openai.com/pricing)
-
-### Adzuna API
-- **Purpose**: Fetching job listings by keyword
-- **Documentation**: [Adzuna API Documentation](https://developer.adzuna.com/overview)
-- **Endpoint Used**: `/v1/api/jobs/{country}/search`
 
 ## Frontend Libraries & Frameworks
 
