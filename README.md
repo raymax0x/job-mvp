@@ -1,4 +1,4 @@
-# Job-Posting Insights
+# Job-MVP 
 
 An intelligent job search application that fetches job listings, auto-summarizes job descriptions, and generates customized cover letters using AI.
 
