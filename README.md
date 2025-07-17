@@ -70,14 +70,16 @@ An intelligent job search application that fetches job listings, auto-summarizes
 ### Frontend
 - **Framework**: Next.js with React
 - **Language**: TypeScript
+- **State Management**: Zustand
 - **Styling**: Tailwind CSS
 - **API Communication**: Fetch API
 
 ### Backend
 - **Framework**: Express.js
+- **Architecture**: MVC pattern with Controllers, Services, and Models
 - **Language**: JavaScript
 - **APIs**: OpenAI GPT-3.5 Turbo, Adzuna Jobs API
-- **Optimizations**: Parallel processing, in-memory caching
+- **Optimizations**: Parallel processing, in-memory caching, separation of concerns
 
 ## Getting Started
 
@@ -148,6 +150,8 @@ An intelligent job search application that fetches job listings, auto-summarizes
 - **Parallel Processing**: Jobs are processed in small batches (5 at a time) for efficient API usage
 - **Caching**: Job summaries are cached to prevent redundant API calls
 - **Token Tracking**: Detailed tracking of token usage and costs for AI operations
+- **Architectural Improvements**: Clear separation of concerns with controllers and services
+- **Code Maintainability**: Modular design for easier maintenance and future extensions
 
 ## Deployment
 
@@ -186,14 +190,25 @@ For deploying your own instance:
 ```
 job-posting-insights/
 ├── backend/
+│   ├── controllers/
+│   │   ├── jobController.js        # Job endpoints request handling
+│   │   ├── summarizeController.js  # Summary endpoints request handling
+│   │   └── coverLetterController.js # Cover letter endpoints request handling
+│   ├── services/
+│   │   ├── jobService.js           # Job search and processing business logic
+│   │   ├── summarizeService.js      # Summarization business logic
+│   │   └── coverLetterService.js    # Cover letter generation business logic
+│   ├── models/
+│   │   └── Metrics.js               # Data models and structures
 │   ├── routes/
-│   │   ├── jobs.js          # Job search and summarization endpoints
-│   │   └── coverLetter.js   # Cover letter generation endpoint
+│   │   ├── jobs.js                  # Job search endpoint routes
+│   │   ├── summarize.js             # Summarization endpoint routes
+│   │   └── coverLetter.js           # Cover letter endpoint routes
 │   ├── utils/
-│   │   ├── fetchJobs.js     # Adzuna API integration
-│   │   ├── summarizeJob.js  # OpenAI job summarization
-│   │   └── generateCoverLetter.js  # OpenAI cover letter generation
-│   └── server.js            # Express server setup
+│   │   ├── fetchJobs.js             # Adzuna API integration
+│   │   ├── summarizeJob.js          # OpenAI job summarization
+│   │   └── generateCoverLetter.js   # OpenAI cover letter generation
+│   └── app.js                       # Express server setup
 ├── frontend/
 │   ├── app/
 │   │   ├── components/

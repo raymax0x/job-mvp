@@ -49,12 +49,27 @@ This document lists all external sources, libraries, APIs, and resources used in
 - **Documentation**: [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - **Version**: 5.x
 
+### Zustand
+- **Purpose**: State management for React applications
+- **Documentation**: [Zustand Documentation](https://github.com/pmndrs/zustand)
+- **Version**: 4.x
+- **Benefits**: Simple API, minimal boilerplate, TypeScript integration
+
 ## Backend Libraries & Frameworks
 
 ### Express.js
 - **Purpose**: Node.js web application framework
 - **Documentation**: [Express.js Documentation](https://expressjs.com/)
 - **Version**: 4.x
+
+### Architectural Pattern
+- **Pattern**: Model-View-Controller (MVC)
+- **Implementation**:
+  - **Controllers**: Handle HTTP requests/responses
+  - **Services**: Contain business logic separate from HTTP concerns
+  - **Models**: Define data structures and schema
+  - **Routes**: Map URL endpoints to controller methods
+- **Benefits**: Separation of concerns, improved maintainability, easier testing
 
 ### Axios
 - **Purpose**: HTTP client for making API requests
