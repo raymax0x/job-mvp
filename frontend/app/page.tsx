@@ -13,6 +13,7 @@ export default function Home() {
     loading,
     error,
     searchKeyword,
+    lastSearchedKeyword,
     setSearchKeyword,
     searchJobs,
     resetJobMetrics
@@ -142,7 +143,7 @@ export default function Home() {
             {loading
               ? 'Loading jobs...'
               : jobs.length > 0
-              ? `Found ${jobs.length} jobs matching "${searchKeyword}"`
+              ? `Found ${jobs.length} jobs matching "${lastSearchedKeyword}"`
               : 'No jobs found'}
           </p>
         </div>

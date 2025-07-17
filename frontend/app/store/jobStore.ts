@@ -11,6 +11,7 @@ interface JobState {
   loading: boolean;
   error: string;
   searchKeyword: string;
+  lastSearchedKeyword: string; // Tracks the keyword that was actually searched
   location: string;
   
   // Actions
@@ -27,6 +28,7 @@ export const useJobStore = create<JobState>((set, get) => ({
   loading: false,
   error: '',
   searchKeyword: 'Full-Stack Engineer',
+  lastSearchedKeyword: 'Full-Stack Engineer', // Initialize with same value as searchKeyword
   location: '',
   
   // Action methods
@@ -34,9 +36,10 @@ export const useJobStore = create<JobState>((set, get) => ({
   setLocation: (location) => set({ location }),
   
   searchJobs: async () => {
-    set({ loading: true, error: '' });
+    const currentKeyword = get().searchKeyword;
+    set({ loading: true, error: '', lastSearchedKeyword: currentKeyword });
     try {
-      const response = await fetchJobs(get().searchKeyword);
+      const response = await fetchJobs(currentKeyword);
       set({
         jobs: response.jobs || [],
         metrics: response.metrics || {},
