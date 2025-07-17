@@ -96,6 +96,38 @@ An intelligent job search application that fetches job listings, auto-summarizes
 - **Caching**: Job summaries are cached to prevent redundant API calls
 - **Token Tracking**: Detailed tracking of token usage and costs for AI operations
 
+## Deployment
+
+The application is deployed and accessible at the following URLs:
+
+- **Frontend (Vercel)**: [https://job-mvp.vercel.app/](https://job-mvp.vercel.app/)
+- **Backend (Render)**: [https://job-mvp-backend.onrender.com/](https://job-mvp-backend.onrender.com/)
+
+### Deployment Configuration
+
+For deploying your own instance:
+
+1. **Backend (Render)**
+   - Create a new Web Service on Render
+   - Connect your repository or deploy from source
+   - Set Root Directory to `backend`
+   - Add the following environment variables:
+     ```
+     PORT=10000
+     OPENAI_API_KEY=your_openai_api_key
+     ADZUNA_APP_ID=your_adzuna_app_id
+     ADZUNA_API_KEY=your_adzuna_api_key
+     CORS_ORIGIN=your_frontend_url
+     ```
+
+2. **Frontend (Vercel)**
+   - Deploy to Vercel using their GitHub integration or CLI
+   - Add the following environment variable:
+     ```
+     NEXT_PUBLIC_API_URL=your_backend_url/api
+     ```
+   - Make sure to include the `/api` suffix in your backend URL
+
 ## Project Structure
 
 ```
