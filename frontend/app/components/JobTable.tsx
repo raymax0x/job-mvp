@@ -1,18 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
-import { generateCoverLetter } from '../api/jobService';
+import React from 'react';
 import { Job, JobTableProps } from '../types';
+import { useJobTableStore } from '../store/jobTableStore';
 // Using native Date formatting instead of date-fns
 
 const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
-  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
-  const [coverLetters, setCoverLetters] = useState<Record<string, string>>({});
-  const [generatingCoverLetter, setGeneratingCoverLetter] = useState<
-    Record<string, boolean>
-  >({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 5;
+  // Use Zustand store instead of local state
+  const {
+    expandedJobId,
+    coverLetters,
+    generatingCoverLetter,
+    currentPage,
+    jobsPerPage,
+    toggleExpand,
+    generateCoverLetterForJob,
+    setPage
+  } = useJobTableStore();
 
   // Calculate pagination info
   const indexOfLastJob = currentPage * jobsPerPage;
@@ -20,31 +24,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
   const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
 
-  // Toggle expanded row
-  const toggleExpand = (jobId: string) => {
-    if (expandedJobId === jobId) {
-      setExpandedJobId(null);
-    } else {
-      setExpandedJobId(jobId);
-    }
-  };
 
-  // Handle cover letter generation
-  const handleGenerateCoverLetter = async (job: Job) => {
-    try {
-      setGeneratingCoverLetter({ ...generatingCoverLetter, [job.id]: true });
-      const response = await generateCoverLetter(job);
-      setCoverLetters({
-        ...coverLetters,
-        [job.id]: response.coverLetter,
-      });
-    } catch (error: unknown) {
-      console.error('Error generating cover letter:', error);
-      alert('Failed to generate cover letter. Please try again.');
-    } finally {
-      setGeneratingCoverLetter({ ...generatingCoverLetter, [job.id]: false });
-    }
-  };
 
   // Format date to readable format
   const formatDate = (dateString: string) => {
@@ -177,7 +157,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleGenerateCoverLetter(job);
+                          generateCoverLetterForJob(job);
                         }}
                         disabled={generatingCoverLetter[job.id]}
                         className='px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 disabled:opacity-50 flex items-center'
@@ -202,26 +182,26 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
 
       {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className='flex justify-center mt-6'>
-          <button
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className='px-4 py-2 mx-1 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 disabled:opacity-50'
-          >
-            Previous
-          </button>
-          <span className='px-4 py-2 mx-1 font-medium text-gray-800'>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() =>
-              setCurrentPage(Math.min(totalPages, currentPage + 1))
-            }
-            disabled={currentPage === totalPages}
-            className='px-4 py-2 mx-1 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 disabled:opacity-50'
-          >
-            Next
-          </button>
+        <div className='flex justify-center my-6'>
+          <div className='flex items-center gap-2'>
+            <button
+              onClick={() => setPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className='px-4 py-2 mx-1 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 disabled:opacity-50'
+            >
+              Previous
+            </button>
+            <span className='px-4 py-2 mx-1 font-medium text-gray-800'>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className='px-4 py-2 mx-1 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 disabled:opacity-50'
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
     </div>

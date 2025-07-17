@@ -1,54 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import JobTable from './components/JobTable';
 import MetricsDisplay from './components/MetricsDisplay';
-import { fetchJobs, resetMetrics } from './api/jobService';
-import { Job, AppMetrics } from './types';
+import { useJobStore } from './store/jobStore';
 
 export default function Home() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [metrics, setMetrics] = useState<AppMetrics>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [searchKeyword, setSearchKeyword] = useState('Full-Stack Engineer');
+  // Use Zustand store instead of local state
+  const {
+    jobs,
+    metrics,
+    loading,
+    error,
+    searchKeyword,
+    setSearchKeyword,
+    searchJobs,
+    resetJobMetrics
+  } = useJobStore();
 
   useEffect(() => {
     // Initial job loading when component mounts
-    loadJobs();
+    searchJobs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadJobs = async (keyword = searchKeyword) => {
-    try {
-      setLoading(true);
-      setError('');
-      const response = await fetchJobs(keyword);
-      setJobs(response.jobs || []);
-      setMetrics(response.metrics || {});
-    } catch (error) {
-      console.error('Error loading jobs:', error);
-      setError('Failed to load jobs. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadJobs();
+    searchJobs();
   };
 
-  const handleRefresh = async () => {
-    try {
-      // First reset the metrics
-      await resetMetrics();
-      // Then load the jobs
-      loadJobs();
-    } catch (error) {
-      console.error('Error refreshing data:', error);
-      setError('Failed to refresh data. Please try again.');
-    }
+  const handleRefresh = () => {
+    resetJobMetrics().then(() => searchJobs());
   };
 
   return (
