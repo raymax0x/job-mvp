@@ -4,16 +4,19 @@ import { useState, useEffect } from 'react';
 import JobTable from './components/JobTable';
 import MetricsDisplay from './components/MetricsDisplay';
 import { fetchJobs, resetMetrics } from './api/jobService';
+import { Job, AppMetrics } from './types';
 
 export default function Home() {
-  const [jobs, setJobs] = useState([]);
-  const [metrics, setMetrics] = useState<any>({});
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [metrics, setMetrics] = useState<AppMetrics>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('Full-Stack Engineer');
 
   useEffect(() => {
+    // Initial job loading when component mounts
     loadJobs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadJobs = async (keyword = searchKeyword) => {

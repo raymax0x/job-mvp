@@ -2,6 +2,7 @@
  * Job Service for interacting with the backend API
  */
 import config from '../config';
+import { Job, JobsApiResponse, CoverLetterApiResponse } from '../types';
 
 // Adjust the API URL based on your environment
 const API_BASE_URL = config.api.baseUrl;
@@ -10,7 +11,7 @@ const API_BASE_URL = config.api.baseUrl;
  * Fetch jobs with summaries from the API
  * @param keyword - Search keyword for jobs
  */
-export async function fetchJobs(keyword: string = 'Full-Stack Engineer') {
+export async function fetchJobs(keyword: string = 'Full-Stack Engineer'): Promise<JobsApiResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/jobs`, {
       method: 'POST',
@@ -35,7 +36,7 @@ export async function fetchJobs(keyword: string = 'Full-Stack Engineer') {
  * Generate a cover letter for a specific job
  * @param job - Job object with title, company, and summary
  */
-export async function generateCoverLetter(job: any) {
+export async function generateCoverLetter(job: Job): Promise<CoverLetterApiResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/cover-letter`, {
       method: 'POST',

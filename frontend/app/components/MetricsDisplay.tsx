@@ -1,21 +1,7 @@
 'use client';
 
 import React from 'react';
-
-interface Metrics {
-  totalRuntime: number;
-  totalTokens: number;
-  totalCost: number;
-  requestCount: number;
-  lastRefreshTime?: string;
-}
-
-interface MetricsDisplayProps {
-  metrics: {
-    operationRuntime?: number;
-    globalMetrics?: Metrics;
-  };
-}
+import { MetricsDisplayProps } from '../types';
 
 const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics }) => {
   const { operationRuntime, globalMetrics } = metrics || {};
@@ -47,7 +33,8 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics }) => {
         2,
         '0'
       )}:${String(date.getSeconds()).padStart(2, '0')}`;
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Error formatting metric:', error);
       return dateString;
     }
   };
@@ -76,7 +63,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics }) => {
             Runtime
           </div>
           <div className='font-bold text-2xl text-gray-800'>
-            {formatTime(globalMetrics.totalRuntime)}
+            {formatTime(globalMetrics.totalRuntime ?? 0)}
           </div>
         </div>
         <div className='bg-white p-4 rounded-lg shadow-sm border border-gray-100'>
@@ -84,7 +71,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics }) => {
             Tokens
           </div>
           <div className='font-bold text-2xl text-gray-800'>
-            {globalMetrics.totalTokens.toLocaleString()}
+            {(globalMetrics.totalTokens ?? 0).toLocaleString()}
           </div>
         </div>
         <div className='bg-white p-4 rounded-lg shadow-sm border border-gray-100'>
@@ -92,7 +79,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics }) => {
             Cost
           </div>
           <div className='font-bold text-2xl text-gray-800'>
-            {formatCost(globalMetrics.totalCost)}
+            {formatCost(globalMetrics.totalCost ?? 0)}
           </div>
         </div>
       </div>

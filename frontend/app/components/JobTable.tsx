@@ -2,25 +2,8 @@
 
 import React, { useState } from 'react';
 import { generateCoverLetter } from '../api/jobService';
+import { Job, JobTableProps } from '../types';
 // Using native Date formatting instead of date-fns
-
-interface Job {
-  id: string;
-  title: string;
-  description: string;
-  company: { display_name: string } | null;
-  location: { display_name: string } | null;
-  created: string;
-  salary_min: number;
-  salary_max: number;
-  summary: string;
-  url: string;
-}
-
-interface JobTableProps {
-  jobs: Job[];
-  loading: boolean;
-}
 
 const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -55,7 +38,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
         ...coverLetters,
         [job.id]: response.coverLetter,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error generating cover letter:', error);
       alert('Failed to generate cover letter. Please try again.');
     } finally {
@@ -72,7 +55,9 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading }) => {
         day: '2-digit',
         year: 'numeric',
       });
-    } catch (error) {
+    } catch (_error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // Silently handle invalid date and return original string
       return dateString;
     }
   };
