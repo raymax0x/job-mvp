@@ -12,6 +12,9 @@ let globalMetrics = {
   lastRefreshTime: null,
 };
 
+// Global cache for job summaries
+const summaryCache = new Map();
+
 /**
  * Main route for fetching jobs with auto-summarization
  * Accepts a keyword parameter for job search
@@ -28,7 +31,6 @@ router.post('/', async (req, res) => {
     // Process jobs in batches to control concurrency
     const batchSize = 5; // Process 5 jobs concurrently
     const jobsWithSummaries = [];
-    const summaryCache = new Map(); // Simple in-memory cache
 
     // Process in smaller batches for controlled parallelization
     for (let i = 0; i < jobs.length; i += batchSize) {
@@ -145,6 +147,8 @@ router.post('/reset-metrics', (req, res) => {
     requestCount: 0,
     lastRefreshTime: new Date().toISOString(),
   };
+
+  summaryCache.clear();
 
   res.json({
     success: true,
