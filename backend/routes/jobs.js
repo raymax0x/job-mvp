@@ -20,62 +20,97 @@ let globalMetrics = {
 router.post('/', async (req, res) => {
   const { keyword } = req.body;
   const startTime = Date.now();
-  
+
   try {
     // Fetch jobs from API
     const jobs = await fetchJobs(keyword);
-    
-    // Process each job in parallel to generate summaries
-    const jobsWithSummaries = await Promise.all(
-      jobs.map(async (job) => {
-        try {
-          // Generate summary for each job
-          const { summary, metrics } = await summarizeJob(job);
-          
-          // Update global metrics
-          globalMetrics.totalRuntime += metrics.runtime;
-          globalMetrics.totalTokens += metrics.tokensUsed;
-          globalMetrics.totalCost += metrics.cost;
-          globalMetrics.requestCount++;
-          
-          // Return only necessary fields
-          return {
-            id: job.id,
-            title: job.title,
-            description: job.description,
-            company: job.company ? { display_name: job.company.display_name } : null,
-            location: job.location ? { display_name: job.location.display_name } : null,
-            created: job.created,
-            salary_min: job.salary_min,
-            salary_max: job.salary_max,
-            url: job.redirect_url,
-            summary,
-            metrics,
-          };
-        } catch (error) {
-          console.error(`Error summarizing job ${job.id}:`, error);
-          return {
-            id: job.id,
-            title: job.title,
-            description: job.description,
-            company: job.company ? { display_name: job.company.display_name } : null,
-            location: job.location ? { display_name: job.location.display_name } : null,
-            created: job.created,
-            salary_min: job.salary_min,
-            salary_max: job.salary_max,
-            url: job.redirect_url,
-            summary: "Failed to generate summary.",
-            metrics: { runtime: 0, tokensUsed: 0, cost: 0 }
-          };
-        }
-      })
-    );
-    
+
+    // Process jobs in batches to control concurrency
+    const batchSize = 5; // Process 5 jobs concurrently
+    const jobsWithSummaries = [];
+    const summaryCache = new Map(); // Simple in-memory cache
+
+    // Process in smaller batches for controlled parallelization
+    for (let i = 0; i < jobs.length; i += batchSize) {
+      const batch = jobs.slice(i, i + batchSize);
+
+      // Process this batch in parallel
+      const batchResults = await Promise.all(
+        batch.map(async (job) => {
+          try {
+            // Check cache first
+            const cacheKey = `${job.id}-summary`;
+            if (summaryCache.has(cacheKey)) {
+              // Use cached result
+              const cachedResult = summaryCache.get(cacheKey);
+              globalMetrics.requestCount++; // Still count as a request for metrics
+              return cachedResult;
+            }
+
+            // Generate summary for job
+            const { summary, metrics } = await summarizeJob(job);
+
+            // Update global metrics
+            globalMetrics.totalRuntime += metrics.runtime;
+            globalMetrics.totalTokens += metrics.tokensUsed;
+            globalMetrics.totalCost += metrics.cost;
+            globalMetrics.requestCount++;
+
+            // Prepare result
+            const result = {
+              id: job.id,
+              title: job.title,
+              description: job.description,
+              company: job.company
+                ? { display_name: job.company.display_name }
+                : null,
+              location: job.location
+                ? { display_name: job.location.display_name }
+                : null,
+              created: job.created,
+              salary_min: job.salary_min,
+              salary_max: job.salary_max,
+              url: job.redirect_url,
+              summary,
+              metrics,
+            };
+
+            // Cache result for future use
+            summaryCache.set(cacheKey, result);
+
+            return result;
+          } catch (error) {
+            console.error(`Error summarizing job ${job.id}:`, error);
+            return {
+              id: job.id,
+              title: job.title,
+              description: job.description,
+              company: job.company
+                ? { display_name: job.company.display_name }
+                : null,
+              location: job.location
+                ? { display_name: job.location.display_name }
+                : null,
+              created: job.created,
+              salary_min: job.salary_min,
+              salary_max: job.salary_max,
+              url: job.redirect_url,
+              summary: 'Failed to generate summary.',
+              metrics: { runtime: 0, tokensUsed: 0, cost: 0 },
+            };
+          }
+        })
+      );
+
+      // Add batch results to main array
+      jobsWithSummaries.push(...batchResults);
+    }
+
     // Calculate total operation metrics
     const endTime = Date.now();
     const operationRuntime = endTime - startTime;
     globalMetrics.lastRefreshTime = new Date().toISOString();
-    
+
     res.json({
       jobs: jobsWithSummaries,
       metrics: {
