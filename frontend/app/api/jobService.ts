@@ -1,10 +1,10 @@
 /**
  * Job Service for interacting with the backend API
  */
+import config from '../config';
 
 // Adjust the API URL based on your environment
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = config.api.baseUrl;
 
 /**
  * Fetch jobs with summaries from the API

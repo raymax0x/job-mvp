@@ -1,13 +1,19 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const config = require('./config');
 
 const jobRoutes = require('./routes/jobs');
 const summarizeRoutes = require('./routes/summarize');
 const coverLetterRoutes = require('./routes/coverLetter');
 
 const app = express();
-app.use(cors());
+
+// Configure CORS with settings from config
+app.use(
+  cors({
+    origin: config.cors.origin,
+  })
+);
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -20,7 +26,9 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/summarize', summarizeRoutes);
 app.use('/api/cover-letter', coverLetterRoutes);
 
-const PORT = process.env.PORT || 8001;
+const PORT = config.server.port;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(
+    `Server running on port ${PORT} in ${config.server.environment} mode`
+  );
 });
