@@ -3,7 +3,8 @@
  */
 
 // Adjust the API URL based on your environment
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
 
 /**
  * Fetch jobs with summaries from the API
@@ -61,7 +62,7 @@ export async function generateCoverLetter(job: any) {
 export async function getJobMetrics() {
   try {
     const response = await fetch(`${API_BASE_URL}/jobs/metrics`);
-    
+
     if (!response.ok) {
       throw new Error(`Error fetching metrics: ${response.status}`);
     }
@@ -79,14 +80,40 @@ export async function getJobMetrics() {
 export async function getCoverLetterMetrics() {
   try {
     const response = await fetch(`${API_BASE_URL}/cover-letter/metrics`);
-    
+
     if (!response.ok) {
-      throw new Error(`Error fetching cover letter metrics: ${response.status}`);
+      throw new Error(
+        `Error fetching cover letter metrics: ${response.status}`
+      );
     }
 
     return await response.json();
   } catch (error) {
     console.error('Failed to fetch cover letter metrics:', error);
+    throw error;
+  }
+}
+
+/**
+ * Reset all job metrics
+ * This will clear all accumulated metrics data
+ */
+export async function resetMetrics() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/jobs/reset-metrics`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error resetting metrics: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to reset metrics:', error);
     throw error;
   }
 }

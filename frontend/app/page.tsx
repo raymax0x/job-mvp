@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import JobTable from './components/JobTable';
 import MetricsDisplay from './components/MetricsDisplay';
-import { fetchJobs } from './api/jobService';
+import { fetchJobs, resetMetrics } from './api/jobService';
 
 export default function Home() {
   const [jobs, setJobs] = useState([]);
@@ -36,8 +36,16 @@ export default function Home() {
     loadJobs();
   };
 
-  const handleRefresh = () => {
-    loadJobs();
+  const handleRefresh = async () => {
+    try {
+      // First reset the metrics
+      await resetMetrics();
+      // Then load the jobs
+      loadJobs();
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      setError('Failed to refresh data. Please try again.');
+    }
   };
 
   return (

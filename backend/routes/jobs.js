@@ -132,4 +132,25 @@ router.get('/metrics', (req, res) => {
   res.json({ metrics: globalMetrics });
 });
 
+/**
+ * Route to reset all metrics
+ * Clears all accumulated metrics and returns the reset metrics
+ */
+router.post('/reset-metrics', (req, res) => {
+  // Reset all metrics to zero
+  globalMetrics = {
+    totalRuntime: 0,
+    totalTokens: 0,
+    totalCost: 0,
+    requestCount: 0,
+    lastRefreshTime: new Date().toISOString(),
+  };
+
+  res.json({
+    success: true,
+    message: 'Metrics reset successfully',
+    metrics: globalMetrics,
+  });
+});
+
 module.exports = router;
